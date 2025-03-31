@@ -5,10 +5,10 @@ if __name__ == '__main__':
     #use system
     #SPECIFICATION
     # - logging
-    # - adding new taks lists
-    # - adding new tasks to choosen list
+    # - adding new task lists
+    # - adding new tasks to chosen list
     # - sorting using priority, expected time, time_of_adding
     # - use genetic neural network to choose the best order of execution
-    # - ask for weather
+    # - ask for whether
     # - ask for a joke
-    # - quck back to main list
+    # - quick back to main list
