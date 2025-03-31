@@ -1,0 +1,8 @@
+Czarny	    \033[30m
+Czerwony	\033[91m
+Zielony	    \033[92m
+Żółty	    \033[93m
+Niebieski	\033[94m
+Fioletowy	\033[95m
+Cyan	    \033[96m
+Biały	    \033[97m
