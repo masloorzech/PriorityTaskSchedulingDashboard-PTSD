@@ -130,17 +130,71 @@ def perform_logging() -> str:
         else:
             print("\033[91mERROR:\033[0m Unknown command")
 
+
+def run_admin_functionality(username: str) -> str:
+    pass
+
 def run_main_functionality(username: str) -> str:
     display_title_message(username)
     display_system_commands()
+    actual_list = None
     while True:
-        user_input = input().strip().lower()
+        user_input = input(actual_list).strip().lower()
         if user_input in {"log out", "logout"}:
             return "log out"
         elif user_input in {"quit", "q"}:
             quit_system()
         elif user_input in {"help", "h", "?"}:
             display_system_commands()
+        elif user_input == "ptsd show":
+            # ask server for all user lists and display all
+            pass
+        elif user_input == "ptsd show all":
+            #ask server for all user lists and display all tasks in all lists
+            pass
+        elif user_input.startswith("ptsd delete "):
+            list_name = user_input.split(" ")[2]
+            print(f"Deleting {list_name}")
+            #delete task list
+            pass
+        elif user_input.startswith("ptsd add "):
+            #adding new task list
+            list_name = user_input.split(" ")[2]
+            print(f"Adding {list_name}")
+            pass
+
+        elif user_input.startswith("ptsd select"):
+            list_name = user_input.split(" ")[2]
+            print(f"Selecting {list_name}")
+            #set acctual list on listname if avaliable
+            actual_list = list_name
+            pass
+
+        if actual_list is not None:
+            if user_input == "show":
+                #display all user tasks inside actual list
+                pass
+            elif user_input == "clear":
+                #clear all tasks inside actual list
+                pass
+            elif user_input == "back":
+                #back to main editor
+                actual_list = None
+            elif user_input.startswith("add "):
+                #adding new task to list
+                pass
+            elif user_input.startswith("delete "):
+                task_id = user_input.split(" ")[1]
+                #deletig taks via id
+                pass
+            elif user_input.startswith("done "):
+                task_id = user_input.split(" ")[1]
+                #checking task via id
+                pass
+            elif user_input.startswith("undone "):
+                task_id = user_input.split(" ")[1]
+                #unchecking task via id
+                pass
 
 
 LOGGING_COMMANDS = {
@@ -156,11 +210,11 @@ if __name__ == '__main__':
         user = perform_logging()
         if user is None:
             exit()
-
         if user == "ADMIN":
             print("Logged as ADMIN")
-
-        action = run_main_functionality(user)
-        if action == "log out":
-            print("Logged out")
+            run_admin_functionality()
+        else:
+            action = run_main_functionality(user)
+            if action == "log out":
+                print("Logged out")
 
