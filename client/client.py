@@ -1,12 +1,12 @@
 import os
 import requests
+from globals import *
+from admin_commands import handle_show_users
 
-SERVER_IP = '127.0.0.1'
-SERVER_PORT = 5000
-url = 'http://{}:{}'.format(SERVER_IP, SERVER_PORT)
 
 COMMAND_PREFIX = ""
 
+user_id =""
 
 def connect() -> tuple[int,str]:
     try:
@@ -31,9 +31,8 @@ def establish_connection() -> int:
         if return_code == 0:
             break
 
-        user_input = input("Do you want to try again? Y/N\n").strip().upper()
-
-        if user_input == "N":
+        result = agreement_form("Do you want to try again? Y/N\n")
+        if not result:
             exit()
 
     return return_code
@@ -50,6 +49,7 @@ def check_if_user_exist(username:str)->bool:
         return False
 
 def register() -> str:
+    global user_id
     print("To quit enter: quit")
     username = input("Enter login: ")
     if username == "quit":
@@ -67,16 +67,22 @@ def register() -> str:
         data = {"username": username, "password": password}
         response = requests.post(url + "/register", json=data)
         if response.status_code == 201:
+            response = requests.post(f"{url}/get_user_id", json=data)
+            user_id = response.json().get("user_id")
             break
 
         print("\033[91mERROR:\033[0m Failed to register user")
 
     clear_screen()
     print("User registered successfully!")
+
+
+
     password = second_password = None
     return username
 
 def log_in(username = None) -> str:
+    global user_id
     print("To quit enter: quit in any field")
     while True:
         if username is None:
@@ -93,12 +99,14 @@ def log_in(username = None) -> str:
 
         data = {"username": username, "password": password}
         request = requests.post(f"{url}/log_in", json=data)
-        response = request.json().get("logged_in", True)
-        if response:
+        if request.status_code == 200:
             clear_screen()
+            response = requests.post(f"{url}/get_user_id", json=data)
+            user_id = response.json().get("user_id")
             print("\033[92mSUCCESS:\033[0m Logged in successfully")
             return username
         else:
+            username = None
             print("Incorrect login or password")
 
 def quit_system() -> None:
@@ -131,15 +139,43 @@ def perform_logging() -> str:
             print("\033[91mERROR:\033[0m Unknown command")
 
 
-def run_admin_functionality(username: str) -> str:
-    pass
+def agreement_form(input_text)->bool:
+    while True:
+        result = input(input_text+'\n').lower()
+        if result == "y":
+            return True
+        elif result == "n":
+            return False
+        else:
+            print("\033[91mERROR:\033[0m Unknown command")
+
+
+def run_admin_functionality() -> str:
+    while True:
+        user_input = input().strip().lower()
+        if user_input in {"quit", "q"}:
+            quit_system()
+        elif user_input in {"log out", "logout"}:
+            return "log out"
+        elif user_input == "show users":
+            handle_show_users()
+        elif user_input.startswith("delete "):
+            user_id_to_delete = user_input.split(" ")[1]
+            result = agreement_form("Are you sure to delete user " + user_id_to_delete)
+            if result:
+                print("\033[92mSUCCESS:\033[0m Deleted " + user_id_to_delete)
+
+
+
+
 
 def run_main_functionality(username: str) -> str:
     display_title_message(username)
     display_system_commands()
     actual_list = None
     while True:
-        user_input = input(actual_list).strip().lower()
+        input_text = actual_list+":" if actual_list is not None else ""
+        user_input = input(input_text).strip().lower()
         if user_input in {"log out", "logout"}:
             return "log out"
         elif user_input in {"quit", "q"}:
