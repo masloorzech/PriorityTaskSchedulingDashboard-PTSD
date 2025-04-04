@@ -98,11 +98,11 @@ def log_in(username = None) -> str:
             return None
 
         data = {"username": username, "password": password}
-        request = requests.post(f"{url}/log_in", json=data)
-        if request.status_code == 200:
+        response = requests.post(f"{url}/log_in", json=data)
+        if response.status_code == 200:
             clear_screen()
-            response = requests.post(f"{url}/get_user_id", json=data)
-            user_id = response.json().get("user_id")
+            response_data = response.json()
+            user_id = response_data.get("user_id")
             print("\033[92mSUCCESS:\033[0m Logged in successfully")
             return username
         else:
@@ -159,15 +159,29 @@ def run_admin_functionality() -> str:
             return "log out"
         elif user_input == "show users":
             handle_show_users()
-        elif user_input.startswith("delete "):
-            user_id_to_delete = user_input.split(" ")[1]
-            result = agreement_form("Are you sure to delete user " + user_id_to_delete)
+        elif user_input.startswith("delete user"):
+            user_id_to_delete = user_input.split(" ")[2]
+            result = agreement_form("Are you sure to delete user " + user_id_to_delete + " y/n")
             if result:
+                request = requests.post(f"{url}/delete_user", json={"admin_id": user_id , "user_id": user_id_to_delete})
+                print(request.json())
                 print("\033[92mSUCCESS:\033[0m Deleted " + user_id_to_delete)
 
 
+def display_all_user_lists() -> None:
+    request = requests.get(f"{url}/get_task_lists/{user_id}")
+    if request.status_code == 200:
+        user_lists = request.json()
+        for user_list in user_lists:
+            print(user_list)
 
-
+def add_new_task_list(list_name) -> None:
+    request = requests.post(f"{url}/create_task_list", json={"user_id": user_id, "list_name": list_name})
+    print(request.status_code)
+    if request.status_code == 201:
+        print("\033[92mSUCCESS:\033[0m Created " + list_name)
+    else:
+        print("\033[91mERROR:\033[0m Failed to create " + list_name)
 
 def run_main_functionality(username: str) -> str:
     display_title_message(username)
@@ -183,6 +197,7 @@ def run_main_functionality(username: str) -> str:
         elif user_input in {"help", "h", "?"}:
             display_system_commands()
         elif user_input == "ptsd show":
+            display_all_user_lists()
             # ask server for all user lists and display all
             pass
         elif user_input == "ptsd show all":
@@ -196,15 +211,15 @@ def run_main_functionality(username: str) -> str:
         elif user_input.startswith("ptsd add "):
             #adding new task list
             list_name = user_input.split(" ")[2]
-            print(f"Adding {list_name}")
-            pass
-
+            add_new_task_list(list_name)
         elif user_input.startswith("ptsd select"):
             list_name = user_input.split(" ")[2]
             print(f"Selecting {list_name}")
             #set acctual list on listname if avaliable
             actual_list = list_name
             pass
+        elif user_input == 'ptsd show data':
+            print("Your user ID: ", user_id)
 
         if actual_list is not None:
             if user_input == "show":
