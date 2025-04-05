@@ -10,8 +10,6 @@ app = Flask(__name__)
 client = MongoClient("mongodb://admin:admin123@localhost:27017/")
 db = client["task_manager"]
 users_collection = db["users"]
-task_lists_collection = db["task_lists"]
-tasks_collection = db["tasks"]
 
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt()
@@ -107,34 +105,71 @@ def register():
         return jsonify({"error": "User already exists"}), 400
 
     hashed_password = hash_password(password)
-    users_collection.insert_one({"username": username, "password": hashed_password})
+    user = {
+      "username": username,
+      "password": hashed_password,
+      "tasklists": []
+    }
+    users_collection.insert_one(user)
 
     return jsonify({"message": "User registered successfully"}), 201
 
-@app.route("/create_task_list", methods=["POST"])
-def create_task_list():
-    data = request.get_json()
-    user_id = data.get("user_id")
-    list_name = data.get("list_name")
-    if not user_id or not list_name:
-        return jsonify({"error": "User ID and list name are required"}), 400
+@app.route("/users/<user_id>/tasklists", methods=["POST"])
+def add_tasklist(user_id):
+    data = request.json  # { "title": "new list example" }
+    users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$push": {"tasklists": {"title": data["title"], "tasks": []}}}
+    )
+    return jsonify({"message": "Tasklist added"}), 201
 
-    new_list = {
-        "user_id": ObjectId(user_id),
-        "name": list_name,
-    }
-    result = task_lists_collection.insert_one(new_list)
-    return jsonify({"message": "Task list created successfully", "list_id": str(result.inserted_id)}), 201
+@app.route("/users/<user_id>/tasklists/<list_title>/tasks", methods=["POST"])
+def add_task(user_id, list_title):
+    data = request.json  # { "title": "Nowe zadanie" }
+    users_collection.update_one(
+        {"_id": ObjectId(user_id), "tasklists.title": list_title},
+        {"$push": {"tasklists.$.tasks": {"title": data["title"], "done": False}}}
+    )
+    return jsonify({"message": "Task added"}), 201
+
+@app.route("/users/<user_id>/tasklists/<list_title>/tasks/<task_title>/done", methods=["PATCH"])
+def mark_task_done(user_id, list_title, task_title):
+    users_collection.update_one(
+        {"_id": ObjectId(user_id), "tasklists.title": list_title},
+        {
+            "$set": {"tasklists.$[list].tasks.$[task].done": True}
+        },
+        array_filters=[
+            {"list.title": list_title},
+            {"task.title": task_title}
+        ]
+    )
+    return jsonify({"message": "Task marked as done"}), 200
+
+@app.route("/users/<user_id>/tasklists/<list_title>/tasks/<task_title>/undone", methods=["PATCH"])
+def mark_task_undone(user_id, list_title, task_title):
+    users_collection.update_one(
+        {"_id": ObjectId(user_id), "tasklists.title": list_title},
+        {
+            "$set": {"tasklists.$[list].tasks.$[task].done": False}
+        },
+        array_filters=[
+            {"list.title": list_title},
+            {"task.title": task_title}
+        ]
+    )
+    return jsonify({"message": "Task marked as done"}), 200
 
 
-@app.route("/get_task_lists/<user_id>", methods=["GET"])
+
+@app.route("/users/<user_id>/tasklists", methods=["GET"])
 def get_task_lists(user_id):
-    lists = list(task_lists_collection.find({"user_id": ObjectId(user_id)}))
-    for task_list in lists:
-        task_list["_id"] = str(task_list["_id"])
-        task_list["user_id"] = str(task_list["user_id"])
+  user = users_collection.find_one({"_id": ObjectId(user_id)}, {"_id": 0, "tasklists": 1})
 
-    return jsonify(lists), 200
+  if not user:
+    return jsonify({"error": "User not found"}), 404
+
+  return jsonify(user["tasklists"]), 200
 
 
 if __name__ == "__main__":

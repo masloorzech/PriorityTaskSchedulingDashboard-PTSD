@@ -13,3 +13,4 @@ def handle_show_users() -> None:
             print("Error: Cannot parse data as JSON.")
     else:
         print(f"Error: Server returned code {response.status_code}")
+
