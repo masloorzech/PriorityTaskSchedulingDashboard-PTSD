@@ -160,6 +160,30 @@ def mark_task_undone(user_id, list_title, task_title):
     )
     return jsonify({"message": "Task marked as done"}), 200
 
+@app.route("/users/<user_id>/tasklists/<list_title>", methods=["DELETE"])
+def delete_tasklist(user_id, list_title):
+    result = users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$pull": {"tasklists": {"title": list_title}}}
+    )
+
+    if result.modified_count == 0:
+        return jsonify({"error": "Tasklist not found"}), 404
+
+    return jsonify({"message": "Tasklist deleted successfully"}), 200
+
+
+@app.route("/users/<user_id>/tasklists/<list_title>/tasks/<task_title>", methods=["DELETE"])
+def delete_task(user_id, list_title, task_title):
+    result = users_collection.update_one(
+        {"_id": ObjectId(user_id), "tasklists.title": list_title},
+        {"$pull": {"tasklists.$.tasks": {"title": task_title}}}
+    )
+
+    if result.modified_count == 0:
+        return jsonify({"error": "Task not found"}), 404
+
+    return jsonify({"message": "Task deleted successfully"}), 200
 
 
 @app.route("/users/<user_id>/tasklists", methods=["GET"])

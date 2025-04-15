@@ -1,26 +1,13 @@
 import os
 import requests
-from urllib3 import request
-
+from utils import display_info, display_error, display_success, display_command
 from globals import *
 from admin_commands import handle_show_users
 
 
-COMMAND_PREFIX = ""
-
 user_id =""
 
 SYSTEM_NAME = "\033[92m\033[1mPTSD\033[0m"
-
-def display_error(message=None):
-  print(f"\033[91m\033[1mERROR:\033[0m \033[91m{message}\033[0m")
-
-def display_success(message=None):
-  print(f"\033[92m\033[1mSUCCESS:\033[0m \033[92m{message}\033[0m")
-
-def display_info(message=None):
-  print(f"\033[96m\033[1mInformation:\033[0m \033[96m{message}\033[0m")
-
 
 def connect() -> tuple[int,str]:
     try:
@@ -40,15 +27,12 @@ def establish_connection() -> int:
     while True:
         display_info("Establishing connection to server")
         return_code, return_message = connect()
-
         print(return_message)
         if return_code == 0:
             break
-
         result = agreement_form("Do you want to try again? Y/N\n")
         if not result:
             exit()
-
     return return_code
 
 def clear_screen() -> None:
@@ -67,7 +51,6 @@ def register(username, password) -> str:
     if check_if_user_exist(username):
       display_error("Username already taken")
       return None
-
     data = {"username": username, "password": password}
     response = requests.post(url + "/register", json=data)
     if response.status_code == 201:
@@ -75,7 +58,6 @@ def register(username, password) -> str:
         user_id = response.json().get("user_id")
     else:
       display_error("Failed to register user")
-
     clear_screen()
     display_success("Registered successfully")
     return username
@@ -99,18 +81,25 @@ def quit_system() -> None:
     exit(0)
 
 def display_logging_commands() -> None:
-    print(f"Log in using: \033[1;92m{COMMAND_PREFIX}log <username> <password>\033[0m\n"
-          f"Register using: \033[1;92m{COMMAND_PREFIX}reg <username> <password> <password>\033[0m\n"
-          f"Or quit using: \033[1;92m{COMMAND_PREFIX}q\033[0m, \033[1;92m{COMMAND_PREFIX}quit \033[0m")
+    display_command("log","<username> <password>","Log into system")
+    display_command("reg","<username> <password> <password>","Register system")
+    display_command("quit",info="Quit system")
+
 
 def display_system_commands() -> None:
-    print(f"Log out using: \033[1;92m{COMMAND_PREFIX}log out\033[0m\n"
-          f"Display help using: \033[1;92m{COMMAND_PREFIX}help\033[0m, \033[1;92m{COMMAND_PREFIX}h\033[0m, \033[1;92m{COMMAND_PREFIX}?\033[0m\n"
-          f"Or quit using: \033[1;92m{COMMAND_PREFIX}q\033[0m, \033[1;92m{COMMAND_PREFIX}quit \033[0m")
+    display_command("log out", info = "Log out of system")
+    display_command("help", info = "Display help")
+    display_command("quit", info = "Quit system")
+    display_command("show", info = "Shows tasklists if in main catalogue, if inside task list shows all tasks")
+    display_command("add", "<name>",info = "Adds new tasklist, select using select command, if inside task list adds new task")
+    display_command("select", "<name>",info = "Selects tasklist and allows to adding task to it")
+    display_command("delete", "<name>",info = "Deletes tasklist if inside task list deletes task")
+    display_command("mark", "<name>",info = "Marks task as done")
+    display_command("unmark", "<name>",info = "Marks task as undone")
 
 def show_actual_task_list_tasks(actual_list) -> None:
   print(f"📋{actual_list}:")
-  tasklists = get_user_tasklists(user_id)
+  tasklists = get_user_tasklists()
   for task in get_tasklist_by_title(tasklists, actual_list)["tasks"]:
     status = "✅" if task["done"] else "❌"
     print(f" {status} {task['title']}")
@@ -179,7 +168,7 @@ def display_all_user_lists() -> None:
   else:
     print("❌ Nie udało się pobrać list.")
 
-def get_user_tasklists(user_id):
+def get_user_tasklists():
   res = requests.get(f"{url}/users/{user_id}/tasklists")
   if res.status_code == 200:
     return res.json()
@@ -227,12 +216,27 @@ def add_new_task(list_title, task_name) -> None:
   else:
     display_error(f"Failed to create {task_name}")
 
+def delete_tasklist(list_title):
+    endpoint = f"{url}/users/{user_id}/tasklists/{list_title}"
+    response = requests.delete(endpoint)
+    if response.status_code == 200:
+        display_all_user_lists()
+
+
+def delete_task(list_title, task_title):
+    endpoint = f"{url}/users/{user_id}/tasklists/{list_title}/tasks/{task_title}"
+    response = requests.delete(endpoint)
+
+    if response.status_code == 200:
+        show_actual_task_list_tasks(list_title)
+
+
 def run_main_functionality(username: str) -> str:
     display_title_message(username)
     display_system_commands()
     actual_list = None
     while True:
-        input_text = f"\033[96m\033[1m{actual_list}\033[0m: "  if actual_list is not None else ""
+        input_text = f"\033[92m\033[1m{actual_list}\033[0m: "  if actual_list is not None else ""
         user_input = input(SYSTEM_NAME+ ": " + input_text).split(" ")
         if user_input[0] in {"log out", "logout"}:
             return "log out"
@@ -242,20 +246,15 @@ def run_main_functionality(username: str) -> str:
             display_system_commands()
         if actual_list is None:
           if user_input[0] == "show":
-              if len(user_input) == 2 and user_input[1] == "all":
-                pass
-                # ask server for all user lists and display all tasks in all lists
-              else:
                 display_all_user_lists()
-          elif user_input[0] == "delete":
-              #delete task list
-              pass
+          elif user_input[0] == "delete" and len(user_input) == 2:
+              delete_tasklist(user_input[1].strip())
           elif user_input[0] == "add" and len(user_input) == 2:
-              list_name = user_input[1]
+              list_name = user_input[1].strip()
               add_new_task_list(list_name)
-          elif user_input[0] == "check" and len(user_input) == 2:
+          elif user_input[0] == "select" and len(user_input) == 2:
               selected_list = user_input[1]
-              tasklists = get_user_tasklists(user_id)
+              tasklists = get_user_tasklists()
               if check_tasklist_exists(tasklists, selected_list):
                 actual_list = selected_list
                 show_actual_task_list_tasks(actual_list)
@@ -266,28 +265,22 @@ def run_main_functionality(username: str) -> str:
         if actual_list is not None:
             if user_input[0] == "show":
               show_actual_task_list_tasks(actual_list)
-            elif user_input[0] == "clear":
-                #clear all tasks inside actual list
-                pass
             elif user_input[0] == "back":
-                #back to main editor
                 actual_list = None
             elif user_input[0] == "add" and len(user_input) >= 2:
               task_name = ""
-              for i in range(1, len(user_input)):
-                task_name = task_name + " " + user_input[i]
-              add_new_task(actual_list, task_name)
+              for i in range(1, len(user_input)):\
+                add_new_task(actual_list, user_input[i].strip())
             elif user_input[0] == "mark" and len(user_input) >= 2:
               for i in range(1, len(user_input)):
-                mark_task(actual_list, user_input[i])
+                mark_task(actual_list, user_input[i].strip())
               show_actual_task_list_tasks(actual_list)
-
-
             elif user_input[0] == "unmark" and len(user_input) >= 2:
               for i in range(1, len(user_input)):
-                unmark_task(actual_list, user_input[i])
+                unmark_task(actual_list, user_input[i].strip())
               show_actual_task_list_tasks(actual_list)
-
+            elif user_input[0] == "delete" and len(user_input) ==2:
+                delete_task(actual_list, user_input[1].strip())
 
 if __name__ == '__main__':
     establish_connection()
