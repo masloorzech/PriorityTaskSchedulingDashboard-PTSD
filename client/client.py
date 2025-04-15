@@ -52,9 +52,9 @@ def register(username, password) -> str:
       display_error("Username already taken")
       return None
     data = {"username": username, "password": password}
-    response = requests.post(url + "/register", json=data)
+    response = requests.post(url + "users/register", json=data)
     if response.status_code == 201:
-        response = requests.post(f"{url}/get_user_id", json=data)
+        response = requests.post(f"{url}/users/get_user_id", json=data)
         user_id = response.json().get("user_id")
     else:
       display_error("Failed to register user")
@@ -65,7 +65,7 @@ def register(username, password) -> str:
 def log_in(username, password) -> str:
     global user_id
     data = {"username": username, "password": password}
-    response = requests.post(f"{url}/log_in", json=data)
+    response = requests.post(f"{url}/users/log_in", json=data)
     if response.status_code == 200:
         clear_screen()
         response_data = response.json()
@@ -151,12 +151,12 @@ def run_admin_functionality() -> str:
             user_id_to_delete = user_input.split(" ")[2]
             result = agreement_form("Are you sure to delete user " + user_id_to_delete + " y/n")
             if result:
-                request = requests.post(f"{url}/delete_user", json={"admin_id": user_id , "user_id": user_id_to_delete})
+                request = requests.post(f"{url}/users/delete_user", json={"admin_id": user_id , "user_id": user_id_to_delete})
                 print(request.json())
                 print("\033[92mSUCCESS:\033[0m Deleted " + user_id_to_delete)
 
 def display_all_user_lists() -> None:
-  response = requests.get(f"{url}/users/{user_id}/tasklists")
+  response = requests.get(f"{url}/tasks/{user_id}/tasklists")
   if response.status_code == 200:
     user_lists = response.json()
     if not user_lists:
@@ -168,7 +168,7 @@ def display_all_user_lists() -> None:
     print("❌ Nie udało się pobrać list.")
 
 def get_user_tasklists():
-  res = requests.get(f"{url}/users/{user_id}/tasklists")
+  res = requests.get(f"{url}/tasks/{user_id}/tasklists")
   if res.status_code == 200:
     return res.json()
   else:
@@ -188,41 +188,41 @@ def check_tasklist_exists(tasklists, title):
   return False
 
 def mark_task(tasklist,task_name) ->None:
-  response = requests.patch(f"{url}/users/{user_id}/tasklists/{tasklist}/tasks/{task_name}/done")
+  response = requests.patch(f"{url}/tasks/{user_id}/tasklists/{tasklist}/tasks/{task_name}/done")
   if response.status_code == 200:
     return
   else:
     display_error("Failed to mark task")
 
 def unmark_task(tasklist,task_name) ->None:
-  response = requests.patch(f"{url}/users/{user_id}/tasklists/{tasklist}/tasks/{task_name}/undone")
+  response = requests.patch(f"{url}/tasks/{user_id}/tasklists/{tasklist}/tasks/{task_name}/undone")
   if response.status_code == 200:
     return
   else:
     display_error("Failed to unmark task")
 
 def add_new_task_list(list_name) -> None:
-    request = requests.post(f"{url}/users/{user_id}/tasklists", json={"title": list_name})
+    request = requests.post(f"{url}/tasks/{user_id}/tasklists", json={"title": list_name})
     if request.status_code == 201:
       display_all_user_lists()
     else:
       display_error(f"Failed to create {list_name}")
 
 def add_new_task(list_title, task_name) -> None:
-  request = requests.post(f"{url}/users/{user_id}/tasklists/{list_title}/tasks", json={"title": task_name})
+  request = requests.post(f"{url}/tasks/{user_id}/tasklists/{list_title}/tasks", json={"title": task_name})
   if request.status_code == 201:
     show_actual_task_list_tasks(list_title)
   else:
     display_error(f"Failed to create {task_name}")
 
 def delete_tasklist(list_title):
-    endpoint = f"{url}/users/{user_id}/tasklists/{list_title}"
+    endpoint = f"{url}/tasks/{user_id}/tasklists/{list_title}"
     response = requests.delete(endpoint)
     if response.status_code == 200:
         display_all_user_lists()
 
 def delete_task(list_title, task_title):
-    endpoint = f"{url}/users/{user_id}/tasklists/{list_title}/tasks/{task_title}"
+    endpoint = f"{url}/tasks/{user_id}/tasklists/{list_title}/tasks/{task_title}"
     response = requests.delete(endpoint)
 
     if response.status_code == 200:
