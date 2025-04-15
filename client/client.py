@@ -85,7 +85,6 @@ def display_logging_commands() -> None:
     display_command("reg","<username> <password> <password>","Register system")
     display_command("quit",info="Quit system")
 
-
 def display_system_commands() -> None:
     display_command("log out", info = "Log out of system")
     display_command("help", info = "Display help")
@@ -222,14 +221,12 @@ def delete_tasklist(list_title):
     if response.status_code == 200:
         display_all_user_lists()
 
-
 def delete_task(list_title, task_title):
     endpoint = f"{url}/users/{user_id}/tasklists/{list_title}/tasks/{task_title}"
     response = requests.delete(endpoint)
 
     if response.status_code == 200:
         show_actual_task_list_tasks(list_title)
-
 
 def run_main_functionality(username: str) -> str:
     display_title_message(username)
