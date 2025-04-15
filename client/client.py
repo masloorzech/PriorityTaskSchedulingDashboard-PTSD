@@ -1,8 +1,8 @@
 import requests
 
-from utils.utils import display_info, display_error, display_success, clear_screen, display_logging_commands, \
-    display_system_commands, display_title_message
+from utils.utils import display_info, display_error, display_success, clear_screen, display_logging_commands, display_system_commands, display_title_message
 from utils.globals import *
+
 SYSTEM_NAME = "\033[92m\033[1mPTSD\033[0m"
 
 def establish_connection() -> int:
@@ -180,9 +180,10 @@ def run_main_functionality(user_id:str,username: str) -> None:
 if __name__ == '__main__':
     from core.auth import log_in, register
     from core.connection import connect
-    from core.tasklist import delete_tasklist, add_new_task_list, get_user_tasklists, check_tasklist_exists, \
-        add_new_task, mark_task, unmark_task, delete_task, get_tasklist_by_title
+    from core.tasklist import delete_tasklist, add_new_task_list, get_user_tasklists, check_tasklist_exists, add_new_task, mark_task, unmark_task, delete_task, get_tasklist_by_title
+
     establish_connection()
+
     while True:
         user_id,username = perform_logging()
         if user_id == "":
