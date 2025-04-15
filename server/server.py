@@ -1,9 +1,11 @@
 from db import db_init
 from flask import Flask
+from dotenv import load_dotenv
+
 
 def create_app():
     app = Flask(__name__)
-
+    load_dotenv()
     # Initialize the database
     db = db_init()
 

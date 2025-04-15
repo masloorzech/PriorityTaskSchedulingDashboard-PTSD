@@ -26,6 +26,8 @@ def display_system_commands() -> None:
     display_command("log out", info = "Log out of system")
     display_command("help", info = "Display help")
     display_command("quit", info = "Quit system")
+    display_command("weather", "<city>",info = "Shows weather in selected city")
+    display_command("weather",info = "Shows weather in actual coordinates")
     display_command("show", info = "Shows tasklists if in main catalogue, if inside task list shows all tasks")
     display_command("add", "<name>",info = "Adds new tasklist, select using select command, if inside task list adds new task")
     display_command("select", "<name>",info = "Selects tasklist and allows to adding task to it")
@@ -35,3 +37,11 @@ def display_system_commands() -> None:
 
 def display_title_message(username = "")->None:
     print(f"Welcome \033[2;97m{username}\033[0m in \033[1;97mPriority Task Scheduling Dashboard - PTSD\033[0m")
+
+def display_weather(data):
+    print("📍 Weather for:", data.get("city", "Unknown city"))
+    print("🌡️ Temperature:", data.get("temperature"), "°C")
+    print("💧 Humidity:", data.get("humidity"), "%")
+    print("🌥️ Description:", data.get("description").capitalize())
+
+

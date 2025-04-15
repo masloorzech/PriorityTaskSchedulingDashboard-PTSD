@@ -1,6 +1,7 @@
 import requests
 
-from utils.utils import display_info, display_error, display_success, clear_screen, display_logging_commands, display_system_commands, display_title_message
+from utils.utils import display_info, display_error, display_success, clear_screen, display_logging_commands, \
+    display_system_commands, display_title_message, display_weather
 from utils.globals import *
 
 SYSTEM_NAME = "\033[92m\033[1mPTSD\033[0m"
@@ -103,6 +104,26 @@ def perform_adding_tasklist(user_id:str, listname: str) -> None:
     else:
         display_error(message)
 
+def perform_weather(city: str) -> None:
+    result, data = get_weather(city)
+    if result:
+        display_weather(data)
+    else:
+        display_error("Can't get weather")
+
+def perform_weather_by_coords()->None:
+    try:
+        ip_info = requests.get("https://ipapi.co/json/").json()
+        lat, lon = ip_info["latitude"], ip_info["longitude"]
+        display_info(f"Accessed location: {lat}, {lon}")
+        result, data = get_weather_by_coords(lat, lon)
+        if result:
+            display_weather(data)
+        else:
+            display_error("Can't get weather")
+    except Exception as e:
+        display_error('Cannot get coordinates')
+
 def run_main_functionality(user_id:str,username: str) -> None:
     display_title_message(username)
     display_system_commands()
@@ -110,6 +131,12 @@ def run_main_functionality(user_id:str,username: str) -> None:
     while True:
         input_text = f"\033[92m\033[1m{actual_list}\033[0m: "  if actual_list is not None else ""
         user_input = input(SYSTEM_NAME+ ": " + input_text).split(" ")
+        if user_input[0] == "weather":
+            if len(user_input) > 1:
+                perform_weather(user_input[1].strip())
+            else:
+                perform_weather_by_coords()
+
         if user_input[0] in {"log out", "logout"}:
             return None
 
@@ -181,7 +208,7 @@ if __name__ == '__main__':
     from core.auth import log_in, register
     from core.connection import connect
     from core.tasklist import delete_tasklist, add_new_task_list, get_user_tasklists, check_tasklist_exists, add_new_task, mark_task, unmark_task, delete_task, get_tasklist_by_title
-
+    from core.weather import get_weather, get_weather_by_coords
     establish_connection()
 
     while True:
