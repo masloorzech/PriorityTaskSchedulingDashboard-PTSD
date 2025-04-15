@@ -1,5 +1,5 @@
 import requests
-from globals import url
+from utils.globals import url
 
 def get_user_tasklists(user_id:str) -> (bool, str):
     res = requests.get(f"{url}/tasks/{user_id}/tasklists")

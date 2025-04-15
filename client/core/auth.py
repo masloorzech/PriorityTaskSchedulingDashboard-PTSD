@@ -1,5 +1,5 @@
 import requests
-from globals import url
+from utils.globals import url
 
 def check_if_user_exist(username:str)->bool:
     response = requests.post(f"{url}/users/user_exist", json={"username": username})

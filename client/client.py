@@ -2,7 +2,7 @@ import requests
 
 from utils.utils import display_info, display_error, display_success, clear_screen, display_logging_commands, \
     display_system_commands
-from client.utils.globals import *
+from utils.globals import *
 SYSTEM_NAME = "\033[92m\033[1mPTSD\033[0m"
 
 def connect() -> tuple[int,str]:
