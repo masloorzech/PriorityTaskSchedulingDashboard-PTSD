@@ -1,23 +1,9 @@
 import requests
 
 from utils.utils import display_info, display_error, display_success, clear_screen, display_logging_commands, \
-    display_system_commands
+    display_system_commands, display_title_message
 from utils.globals import *
 SYSTEM_NAME = "\033[92m\033[1mPTSD\033[0m"
-
-def connect() -> tuple[int,str]:
-    try:
-        response = requests.get(url)
-        return 0, "\033[92mSUCCESS:\033[0m Connection established"
-    except requests.exceptions.ConnectionError:
-        return -1, "\033[91mERROR:\033[0m Cannot connect to server"
-    except requests.exceptions.Timeout:
-        return -1, "\033[91mERROR:\033[0m Timeout server is not responding"
-    except requests.exceptions.RequestException as e:
-        return -1, "\033[91mERROR:\033[0m Unknown error"
-
-def display_title_message(username = "")->None:
-    print(f"Welcome \033[2;97m{username}\033[0m in \033[1;97mPriority Task Scheduling Dashboard - PTSD\033[0m")
 
 def establish_connection() -> int:
     while True:
@@ -77,7 +63,7 @@ def perform_logging() -> (str,str):
                 display_error(username) #In this case username is used lika a buffer for error message
 
         elif user_input[0] == "quit":
-            return None
+            return "",""
         else:
             display_error("Unknown command")
 
@@ -193,6 +179,7 @@ def run_main_functionality(user_id:str,username: str) -> None:
 
 if __name__ == '__main__':
     from core.auth import log_in, register
+    from core.connection import connect
     from core.tasklist import delete_tasklist, add_new_task_list, get_user_tasklists, check_tasklist_exists, \
         add_new_task, mark_task, unmark_task, delete_task, get_tasklist_by_title
     establish_connection()

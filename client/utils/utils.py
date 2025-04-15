@@ -32,3 +32,6 @@ def display_system_commands() -> None:
     display_command("delete", "<name>",info = "Deletes tasklist if inside task list deletes task")
     display_command("mark", "<name>",info = "Marks task as done")
     display_command("unmark", "<name>",info = "Marks task as undone")
+
+def display_title_message(username = "")->None:
+    print(f"Welcome \033[2;97m{username}\033[0m in \033[1;97mPriority Task Scheduling Dashboard - PTSD\033[0m")
