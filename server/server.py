@@ -1,10 +1,12 @@
 from db import db_init
 from flask import Flask
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     load_dotenv()
     # Initialize the database
     db = db_init()

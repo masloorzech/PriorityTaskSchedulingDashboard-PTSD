@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify, Response
 from bson import ObjectId, json_util
 from db import users_collection  # Import the MongoDB users collection
+from flask_cors import CORS
 
 # Create a Blueprint for task-related routes
 tasks_bp = Blueprint("tasks", __name__)
-
+CORS(tasks_bp)
 # Route: Add a new tasklist for a specific user
 @tasks_bp.route("/<user_id>/tasklists", methods=["POST"])
 def add_tasklist(user_id):
