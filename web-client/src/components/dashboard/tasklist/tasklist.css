@@ -1,0 +1,153 @@
+.tasklist_container{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    display: flex;
+    flex-direction:column;
+    justify-content: center;
+}
+
+.tasklist_container input{
+  box-sizing: border-box;
+     -webkit-box-sizing:border-box;
+     -moz-box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+
+
+.tasklist_header{
+    background-color: rgb(126, 161, 238);
+    border-radius: 10px 10px 0 0;
+    padding: 0px;
+    padding-left: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tasklist_header h3{
+    font-size:large;
+}
+
+.tasklist_controls{
+    display: flex;
+    flex-direction: row;
+}
+
+.tasklist_controls button{
+    flex-shrink: 0;    
+    height: 100%;
+    margin-left:10px;
+    padding: 10px;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+}
+
+.tasklist_controls .delete_tasklist_button{
+    margin-right: 20px;
+    margin-left: auto;
+    height: 100%;
+    padding: 10px;
+    background-color: #b53f3f;
+    flex-shrink: 0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+}
+
+.tasklist_header .delete_tasklist_button:hover{
+    background-color: #752525;
+}
+
+.tasklist_container button:hover{
+    background-color: #2c3a89;
+}
+ul {
+    list-style-type:none;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.tasklist{
+    background-color: rgb(153, 180, 236);
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+}
+.tasklist .tasklist_row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;  
+    width: 100%;
+    padding: 5px 0;
+    background-color: #ffffff5b;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.pretty_checkbox {
+    margin-top: 5px;
+    flex-shrink: 0;   
+    appearance: none;
+    border: 2px solid #3f51b5;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.pretty_checkbox:checked {
+    background-color: #3f51b5;
+    border-color: #3f51b5;
+}
+
+.pretty_checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 0;
+    left: 4px;
+    color: white;
+    font-size: 16px;
+}
+
+.tasklist_row .task_title {
+    margin-bottom: 8px;
+    margin-left: 10px;
+    flex-grow: 1;        
+    white-space: nowrap; 
+    overflow: hidden;    
+    text-overflow: ellipsis;
+
+}
+
+.tasklist .delete_task_button{
+    margin-right: 10px;
+    height: 100%;
+    padding: 10px;
+    background-color: #b53f3f;
+    margin-left: auto;
+    flex-shrink: 0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+}
+
+.tasklist .delete_task_button:hover{
+    background-color: #752525;
+}
