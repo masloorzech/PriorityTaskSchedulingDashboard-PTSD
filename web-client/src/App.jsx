@@ -8,8 +8,8 @@ import { useState } from 'react';
 
 function App() {
   
-  const [userId, setUserId] = useState(null);
-  const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const [username, setUsername] = useState(localStorage.getItem("username"));
 
   return (
     <Router>

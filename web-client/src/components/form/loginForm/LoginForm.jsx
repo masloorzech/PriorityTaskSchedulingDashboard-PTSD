@@ -23,6 +23,8 @@ function LoginForm({onLogin}) {
       if (response.ok){
         console.log('Login succesfully')
         onLogin(data.user_id, username);
+        localStorage.setItem("userId", data.user_id);
+        localStorage.setItem("username", username);
         navigate('/dashboard');
 
       }else{

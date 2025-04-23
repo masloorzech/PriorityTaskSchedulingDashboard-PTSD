@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
+import './dashboard.css';
+import Tasklist from './tasklist/Tasklist.jsx';
+import { Link, useNavigate} from 'react-router-dom';
+
 
 function Dashboard({ userId, username }) {
   const [tasklists, setTasklists] = useState([]);
   const [newListTitle, setNewListTitle] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`http://127.0.0.1:5000/tasks/${userId}/tasklists`)
@@ -12,6 +17,10 @@ function Dashboard({ userId, username }) {
   }, [userId]);
 
   const createTaskList = async () => {
+    if (newListTitle==""){
+      alert("Please add tasklist name")
+      return
+  }
     const res = await fetch(`http://127.0.0.1:5000/tasks/${userId}/tasklists`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -27,10 +36,19 @@ function Dashboard({ userId, username }) {
   };
 
   return (
-    <div>
-      <h2>Welcome, {username}</h2>
+    <div className='content'>
+      <div className='title_segment'>
+        <h2>Welcome, {username}</h2>
+        <button className='logout_button'
+        onClick={() => {
+          localStorage.clear();
+          navigate("/");
+        } }
+        >Log out</button>
+      </div>
+      
 
-      <div>
+      <div className='content_fields'>
         <input
           placeholder="New list title"
           value={newListTitle}
@@ -40,27 +58,7 @@ function Dashboard({ userId, username }) {
       </div>
 
       {tasklists.map((list) => (
-        <div key={list.title}>
-          <h3>{list.title}</h3>
-          <ul>
-            {list.tasks.map((task) => (
-              <li key={task.title}>
-                <input
-                  type="checkbox"
-                  checked={task.done}
-                  onChange={async () => {
-                    const endpoint = `http://127.0.0.1:5000/tasks/${userId}/tasklists/${list.title}/tasks/${task.title}/${task.done ? "undone" : "done"}`
-                    await fetch(endpoint, { method: 'PATCH' });
-                    // reload lists
-                    const updated = await fetch(`http://127.0.0.1:5000/tasks/${userId}/tasklists`).then(r => r.json());
-                    setTasklists(updated);
-                  }}
-                />
-                {task.title}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Tasklist key={list.title} userId={userId} tasklistName={list.title} tasks={list.tasks} setTasklists={setTasklists}  />
       ))}
     </div>
   );
