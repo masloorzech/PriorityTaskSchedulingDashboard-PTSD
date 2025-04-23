@@ -3,12 +3,15 @@ import os
 import requests
 from flask import Blueprint, request, jsonify, Response
 from bson import ObjectId, json_util
+from flask_cors import CORS
+
 
 API_KEY = os.environ.get('OPENWEATHER_API_KEY')
 
 API_URL = 'http://api.openweathermap.org/data/2.5/weather'
 
 weather_bp = Blueprint("weather", __name__)
+CORS(weather_bp)
 
 @weather_bp.route('/<city>', methods=['GET'])
 def get_weather(city):

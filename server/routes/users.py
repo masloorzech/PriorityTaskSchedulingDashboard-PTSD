@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, Response
 from bson import ObjectId, json_util
 from db import users_collection
+from flask_cors import CORS
 import bcrypt
 
 
@@ -10,7 +11,7 @@ def hash_password(password: str) -> str:
     return hashed.decode()
 
 users_bp = Blueprint("users", __name__)
-
+CORS(users_bp)
 
 @users_bp.route('/users', methods=['GET'])
 def get_users():
