@@ -9,7 +9,7 @@ def create_app():
     CORS(app)
     load_dotenv()
     # Initialize the database
-    db = db_init()
+    db_init()
 
     from routes import register_blueprints
     register_blueprints(app)
@@ -23,4 +23,4 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
