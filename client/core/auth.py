@@ -24,7 +24,7 @@ def register(username:str, password:str) -> (bool,str,str):
         return False,"", "Username already taken"
 
     data = {"username": username, "password": password}
-    response = requests.post(url + "users/register", json=data)
+    response = requests.post(url + "/users/register", json=data)
 
     if response.status_code == 201:
         response = requests.post(f"{url}/users/get_user_id", json=data)
