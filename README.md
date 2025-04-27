@@ -1,4 +1,5 @@
-# Priority Task Scheduling Dashboard (PTSD)
+![vite (1)](https://github.com/user-attachments/assets/f1f0a4aa-9037-44d4-ad50-8c1ed6ac2aeb)
+# Priority Task Scheduling Dashboard
 
 The **Priority Task Scheduling Dashboard (PTSD)** is an application that helps you create and manage task lists. It offers both a web interface and a terminal interface for managing tasks. The app operates within a Docker environment and stores data in MongoDB for scalability and performance.
 
