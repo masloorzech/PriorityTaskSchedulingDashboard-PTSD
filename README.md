@@ -61,5 +61,5 @@ The tasks and user data are stored in MongoDB, which is running in a Docker cont
   <img src="https://github.com/user-attachments/assets/9feec277-3c51-430d-8d16-845050ece55e" width="45%">
 </p>
 
-License
+## License
 This project is licensed under the MIT License - see the LICENSE file for details.
