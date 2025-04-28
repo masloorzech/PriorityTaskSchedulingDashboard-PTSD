@@ -39,21 +39,26 @@ The tasks and user data are stored in MongoDB, which is running in a Docker cont
 
 ## Screenshots
 
-### Web clinet
+### Web client
 <p align="center">
   <img src="https://github.com/user-attachments/assets/732f8f99-7c26-4d7b-b1dd-375a058994ed" width="45%">
   <img src="https://github.com/user-attachments/assets/1ec9f9bb-38a4-49e7-9248-6f311e83a52f" width="45%">
 </p>
+
 <p align="center">
   <img src="https://github.com/user-attachments/assets/aedc4b84-01e2-4f19-b731-e816d01eec70" width="45%">
   <img src="https://github.com/user-attachments/assets/5d53b662-548d-40d8-b280-492050138e93" width="45%">
 </p>
 
-
 ### Python CLI
 <p align="center">
-  <img src="ścieżka/do/pierwszego_screenshota.png" width="45%">
-  <img src="ścieżka/do/drugiego_screenshota.png" width="45%">
+  <img src="https://github.com/user-attachments/assets/bd438df1-e61d-470e-8a88-4a6273bbbe8a" width="45%">
+  <img src="https://github.com/user-attachments/assets/6507678d-ba8d-47b6-abc2-7acb6d097f40" width="45%">
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3f199916-28e0-427e-bda0-edc9ba29a037" width="45%">
+  <img src="https://github.com/user-attachments/assets/9feec277-3c51-430d-8d16-845050ece55e" width="45%">
 </p>
 
 License
