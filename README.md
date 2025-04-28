@@ -37,27 +37,24 @@ The tasks and user data are stored in MongoDB, which is running in a Docker cont
 - No Task Editing/Deleting in the UI: Users cannot edit or delete tasks through the web interface, but tasks can be deleted via the terminal interface.
 - No Sorting/Filtering of Tasks: Tasks are displayed in a simple list format without any filtering or sorting options.
 
-Screenshots
-Web Interface
+## Screenshots
 
-CLI Interface
+### Web clinet
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/732f8f99-7c26-4d7b-b1dd-375a058994ed" width="45%">
+  <img src="https://github.com/user-attachments/assets/1ec9f9bb-38a4-49e7-9248-6f311e83a52f" width="45%">
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/aedc4b84-01e2-4f19-b731-e816d01eec70" width="45%">
+  <img src="https://github.com/user-attachments/assets/5d53b662-548d-40d8-b280-492050138e93" width="45%">
+</p>
+
+
+### Python CLI
+<p align="center">
+  <img src="ścieżka/do/pierwszego_screenshota.png" width="45%">
+  <img src="ścieżka/do/drugiego_screenshota.png" width="45%">
+</p>
 
 License
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Authors
-Author: Antoni Iwan
-
-Acknowledgements
-Docker and Docker Compose for containerization.
-
-MongoDB for scalable, NoSQL database storage.
-
-Flask for the backend API.
-
-React + Vite for the web interface.
-
-Python for the CLI application.
-
-
-Feel free to modify this template based on your actual project details and adjust things like paths, features, and API endpoints!
